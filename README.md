@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Vera Proactive Engagement Bot
 ## Approach
 We implemented the bot strictly following the Challenge design documentation, establishing a 3-layer architecture:
@@ -14,3 +15,6 @@ We implemented the bot strictly following the Challenge design documentation, es
 The output quality could be vastly improved with:
 1. **Past Merchant Conversions**: If context included historical conversion rates for specific offers, Vera could recommend them more confidently.
 2. **Channel Specifics**: Knowing if the communication is via WhatsApp vs Email could allow the LLM to format with bolding/emojis accordingly.
+=======
+# vera-ai
+>>>>>>> e1af4ae054242f4d03034e00beb798c5b1aebe89
