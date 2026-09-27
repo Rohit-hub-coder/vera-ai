@@ -1,20 +1,32 @@
-<<<<<<< HEAD
 # Vera Proactive Engagement Bot
+
 ## Approach
-We implemented the bot strictly following the Challenge design documentation, establishing a 3-layer architecture:
-1. **Operational Layer**: Fast FastAPI web server, handling in-memory Context push (`/v1/context`) with version validation and idempotency via Python data classes. We strictly observed a sub-30ms latency for operational responses.
-2. **Policy Layer**: `policy_tick` checks constraints (anti-repetition via a sent-trigger hash set) and handles formatting. `policy_reply` uses regex for deterministic auto-reply, opt-out, and hostile pattern classification, defaulting to the LLM for remaining intent mapping.
-3. **Composition Layer**: A unified generative LLM (Gemini 2.5 Flash) handles the `compose` logic. We map the generic 4-context architecture (Category, Merchant, Customer, Trigger) directly into a standardized prompt system.
 
-## Tradeoffs
-1. **Local vs API Rate Limits**: Due to free-tier Gemini API limitations (15 RPM), the bot implements an intelligent, real-data local fallback that dynamically injects parameters (e.g. `customer["preferences"]["language_pref"]`) when rate limited. This guarantees high reliability without blocking the server or throwing 500s.
-2. **Local Classifier over LLM Catch-alls**: We built a pre-filter classifier using explicit text heuristics (`AUTO_REPLY`, `OPT_OUT`, `OFF_TOPIC`) to aggressively route away from the LLM for clearly deterministic paths. This speeds up latency and saves quota.
-3. **Single LLM call**: We reduced the number of LLM calls to exactly ONE per composition, rather than chaining (e.g., classifying, then summarizing, then generating).
+We implemented the bot using a 3-layer architecture:
 
-## Missing Context
-The output quality could be vastly improved with:
-1. **Past Merchant Conversions**: If context included historical conversion rates for specific offers, Vera could recommend them more confidently.
-2. **Channel Specifics**: Knowing if the communication is via WhatsApp vs Email could allow the LLM to format with bolding/emojis accordingly.
-=======
-# vera-ai
->>>>>>> e1af4ae054242f4d03034e00beb798c5b1aebe89
+1. Operational Layer
+   - FastAPI web server
+   - `/v1/context`
+   - `/v1/tick`
+   - `/v1/reply`
+   - `/v1/healthz`
+   - `/v1/metadata`
+
+2. Policy Layer
+   - Handles trigger decisions
+   - Anti-repetition logic
+   - Deterministic reply handling
+   - Opt-out and off-topic routing
+
+3. Composition Layer
+   - Gemini 2.5 Flash
+   - Prompt-based message generation
+   - Local fallback when the model/API is unavailable
+
+## Reliability
+
+The bot includes local fallback responses so that API failures or rate limits do not automatically result in HTTP 500 errors.
+
+## Data
+
+Context is kept in memory and processed through the FastAPI endpoints.
